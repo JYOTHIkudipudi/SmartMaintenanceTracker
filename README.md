@@ -53,7 +53,26 @@ SmartMaintenanceTracker/
  │    └── application.properties
  └── pom.xml
 ```
+---
 
+## 🖼️ Screenshots
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Dashboard
+![Dashboard](screenshots/dashboard.png)
+
+### Devices Page
+![Devices](screenshots/devices.png)
+
+### Alerts Page
+![Alerts](screenshots/alerts.png)
+
+### Export Page
+![Export Reports](screenshots/export.png)
+
+---
 
 ## 🚀 Run Locally
 
