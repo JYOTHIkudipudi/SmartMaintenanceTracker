@@ -1,0 +1,46 @@
+body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f3f4f6; margin:0; }
+.logo-box {
+  height: 80px;
+  width: 320px;
+  border-radius: 12px;
+  background: linear-gradient(135deg,#ff748c,#ffc0cb);
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:1.25rem;
+  font-weight:700;
+  margin: 0 auto;
+}
+.btn-upload { background:#ff9a9e; border:none; color:white; padding:12px 28px; border-radius:30px; box-shadow:0 6px 18px rgba(255,142,148,0.2); }
+.btn-dashboard { background:#fbc7c7; border:none; color:#721c1c; padding:12px 28px; border-radius:30px; }
+.shiny-header { background: linear-gradient(90deg,#111827,#0b1220); color:white; }
+.app-title { font-size:1.25rem; }
+.card { border-radius:12px; }
+
+.button-container {
+    display: flex;              /* make buttons in a row */
+    gap: 15px;                  /* space between buttons */
+    flex-wrap: wrap;            /* wrap if screen is too small */
+    justify-content: center;    /* center buttons horizontally */
+    margin: 20px 0;
+}
+
+.shiny-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;                  /* space between icon and text */
+    padding: 12px 20px;
+    background: linear-gradient(90deg, #4b6cb7, #182848);
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.shiny-btn:hover {
+    background: linear-gradient(90deg, #ff6b6b, #ff4757);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}

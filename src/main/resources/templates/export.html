@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Export Reports</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #4b6cb7, #182848);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #ff4757;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        main {
+            max-width: 600px;
+            margin: 60px auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        button.export-btn {
+            margin: 20px;
+            padding: 15px 25px;
+            font-size: 1.1rem;
+            border: none;
+            border-radius: 10px;
+            background: #1e90ff;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button.export-btn:hover {
+            background: #3742fa;
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Export Reports</h1>
+    <nav>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/devices}">Devices</a>
+        <a th:href="@{/alerts}">Alerts</a>
+        <a th:href="@{/livechart}">Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <p>Download system reports in different formats:</p>
+
+    <form method="get" action="/export/csv">
+        <button class="export-btn" type="submit">📄 Export CSV</button>
+    </form>
+
+    <form method="get" action="/export/pdf">
+        <button class="export-btn" type="submit">📊 Export PDF</button>
+    </form>
+</main>
+
+</body>
+</html>

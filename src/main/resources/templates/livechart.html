@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard - Smart Maintenance Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="/static/style.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+  <body>
+    <header class="shiny-header py-3 mb-4 bg-dark text-white">
+      <div class="container d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center">
+          <div class="logo me-3"><i class="fa fa-heartbeat fa-2x text-danger"></i></div>
+          <div>
+            <h1 class="app-title mb-0">Real-Time Device Health Dashboard</h1>
+            <small class="text-muted text-white">Live monitoring • Alerts</small>
+          </div>
+        </div>
+        <div class="d-flex align-items-center">
+          <a href="/" class="btn btn-light btn-sm me-2">Home</a>
+          <a href="/export_csv" class="btn btn-light btn-sm me-2">Export CSV</a>
+        </div>
+      </div>
+    </header>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-lg-2 bg-light p-3">
+          <h4>Options</h4>
+          <a href="/" class="btn btn-secondary mb-3 w-100"><i class="fa fa-home"></i> Back to Home</a>
+          <button class="btn btn-primary mb-3 w-100" id="refreshBtn"><i class="fa fa-sync-alt"></i> Refresh Data</button>
+        </div>
+
+        <div class="col-lg-10">
+          <div class="row g-3 mb-4">
+            <div th:each="d, idx : ${devices}" class="col-md-6">
+              <div class="card shadow-sm">
+                <div class="card-body">
+                  <h5 th:text="${d.name}">Device Name</h5>
+                  <canvas th:attr="id=${'graph' + idx.index}" height="150"></canvas>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <section>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+              <h4 class="mb-0">Devices</h4>
+              <div class="text-muted small">Updated every 3 seconds</div>
+            </div>
+            <div id="device-filters" class="mb-3"></div>
+            <div id="devices" class="row g-3"></div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      async function loadDeviceGraphs() {
+        const devices = await fetch('/api/devices').then(r => r.json());
+        devices.forEach((d, idx) => {
+          const el = document.getElementById('graph' + idx);
+          if(!el) return;
+          const ctx = el.getContext('2d');
+          // create a tiny sparkline using last 10 history points fetched from /api/device/<id>
+          fetch('/api/device/' + d.id).then(r => r.json()).then(obj => {
+            const hist = obj.history || [];
+            const labels = hist.map(h => new Date(h.timestamp).toLocaleTimeString());
+            const temps = hist.map(h => h.temperature);
+            new Chart(ctx, {
+              type: 'line',
+              data: {
+                labels: labels,
+                datasets: [{
+                  label: 'Temp °C',
+                  data: temps,
+                  tension: 0.3,
+                  fill: true
+                }]
+              },
+              options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { display: false } } }
+            });
+          });
+        });
+      }
+
+      async function loadDevices(){
+        const res = await fetch('/api/devices');
+        const devices = await res.json();
+        const cont = document.getElementById('devices');
+        cont.innerHTML = '';
+        const filters = document.getElementById('device-filters');
+        filters.innerHTML = '';
+        devices.forEach((d, idx) => {
+          const rb = `<div class="form-check form-check-inline me-2">
+            <input class="form-check-input" type="radio" name="deviceRadio" id="devRadio${idx}" value="${d.id}" ${idx===0? 'checked':''}>
+            <label class="form-check-label" for="devRadio${idx}">${d.name}</label>
+          </div>`;
+          filters.insertAdjacentHTML('beforeend', rb);
+
+          const color = d.status === 'ALERT' ? 'border-danger' : d.status === 'WARN' ? 'border-warning' : 'border-success';
+          const statusBadge = d.status === 'ALERT' ? '<span class="badge bg-danger">ALERT</span>' : d.status === 'WARN' ? '<span class="badge bg-warning text-dark">WARN</span>' : '<span class="badge bg-success">OK</span>';
+          const card = `
+            <div class="col-sm-6 col-md-4 col-lg-3">
+              <div class="card ${color} h-100 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex align-items-center">
+                    <i class="fa ${d.icon} fa-2x me-3"></i>
+                    <div>
+                      <h5 class="card-title mb-0">${d.name}</h5>
+                      <div class="small text-muted">${new Date(d.timestamp).toLocaleTimeString()}</div>
+                    </div>
+                  </div>
+                  <div class="mt-3">
+                    <div>Temp: <strong>${d.temperature} °C</strong></div>
+                    <div>Mem: <strong>${d.memory} %</strong></div>
+                    <div>Volt: <strong>${d.voltage} V</strong></div>
+                  </div>
+                </div>
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                  <div>${statusBadge}</div>
+                  <div>
+                    <a href="/device/${d.id}" class="btn btn-sm btn-outline-primary me-2">View</a>
+                    <a href="/export/${d.id}" class="btn btn-sm btn-outline-secondary">CSV</a>
+                  </div>
+                </div>
+              </div>
+            </div>`;
+          cont.insertAdjacentHTML('beforeend', card);
+        });
+
+        document.querySelectorAll('input[name="deviceRadio"]').forEach(r => {
+          r.addEventListener('change', (e)=>{ window.location.href = '/device/' + e.target.value; });
+        });
+      }
+
+      loadDeviceGraphs();
+      loadDevices();
+      document.getElementById('refreshBtn').addEventListener('click', () => { loadDeviceGraphs(); loadDevices(); });
+      setInterval(loadDevices, 3000);
+    </script>
+  </body>
+</html>

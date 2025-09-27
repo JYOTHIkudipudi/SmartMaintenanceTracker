@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Devices Dashboard</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #4b6cb7, #182848);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+            letter-spacing: 1px;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #ff4757;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background: #e0e7ff;
+            margin: 10px 0;
+            padding: 15px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s ease;
+        }
+
+        ul li.online { background: #d4edda; color: #155724; }
+        ul li.offline { background: #f8d7da; color: #721c24; }
+
+        ul li:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        button.refresh-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #1e90ff;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button.refresh-btn:hover {
+            background-color: #3742fa;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Devices Dashboard</h1>
+    <nav>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/alerts}">Alerts</a>
+        <a th:href="@{/export}">Export</a>
+        <a th:href="@{/livecharts}">Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <p>Manage and view all connected devices in real-time.</p>
+
+    <ul id="deviceList">
+        <li class="online">Apple Devices <span>Status: Online</span></li>
+        <li class="offline">Windows Devices <span>Status: Offline</span></li>
+        <li class="online">Sensors <span>Status: Online</span></li>
+        <li class="online">Servers <span>Status: Online</span></li>
+    </ul>
+
+    <button class="refresh-btn" onclick="simulateStatus()">🔄 Refresh Status</button>
+</main>
+
+<script>
+    // Simulate device status change for real-time feel
+    function simulateStatus() {
+        const devices = document.querySelectorAll('#deviceList li');
+        devices.forEach(device => {
+            const isOnline = Math.random() > 0.3; // 70% chance online
+            if(isOnline) {
+                device.classList.remove('offline');
+                device.classList.add('online');
+                device.querySelector('span').textContent = 'Status: Online';
+            } else {
+                device.classList.remove('online');
+                device.classList.add('offline');
+                device.querySelector('span').textContent = 'Status: Offline';
+            }
+        });
+    }
+
+    // Auto-refresh every 10 seconds
+    setInterval(simulateStatus, 10000);
+</script>
+
+</body>
+</html>

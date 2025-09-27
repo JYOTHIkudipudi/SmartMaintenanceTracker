@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>System Alerts</title>
+    <meta charset="UTF-8">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background: linear-gradient(90deg, #4b6cb7, #182848);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        nav {
+            margin-top: 10px;
+        }
+
+        nav a {
+            display: inline-block;
+            margin: 0 15px;
+            padding: 10px 20px;
+            background-color: #ff6b6b;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        nav a:hover {
+            background-color: #ff4757;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+
+        main {
+            max-width: 900px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        }
+
+        #alertsContainer p {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .critical { background: #f8d7da; color: #721c24; }
+        .warning { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        .resolved { background: #d4edda; color: #155724; }
+
+        #alertsContainer p:hover {
+            transform: scale(1.03);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        button.refresh-btn {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 8px;
+            background-color: #1e90ff;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button.refresh-btn:hover {
+            background-color: #3742fa;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>System Alerts</h1>
+    <nav>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/devices}">Devices</a>
+        <a th:href="@{/export}">Export</a>
+        <a th:href="@{/livecharts}">Dashboard</a>
+    </nav>
+</header>
+
+<main>
+    <p>Monitor system alerts in real-time.</p>
+
+    <div id="alertsContainer">
+        <p class="info">System starting up...</p>
+    </div>
+
+    <button class="refresh-btn" onclick="simulateAlerts()">🔄 Refresh Alerts</button>
+</main>
+
+<script>
+    const alertTypes = ['critical', 'warning', 'info', 'resolved'];
+    const alertMessages = [
+        'CPU Usage High',
+        'Disk Space Low',
+        'Network Latency Detected',
+        'All Systems Normal'
+    ];
+
+    function simulateAlerts() {
+        const container = document.getElementById('alertsContainer');
+        container.innerHTML = '';
+        for(let i=0;i<4;i++){
+            const p = document.createElement('p');
+            const typeIndex = Math.floor(Math.random() * alertTypes.length);
+            const msgIndex = Math.floor(Math.random() * alertMessages.length);
+            p.className = alertTypes[typeIndex];
+            p.textContent = alertMessages[msgIndex];
+            container.appendChild(p);
+        }
+    }
+
+    // Auto-refresh every 10 seconds
+    setInterval(simulateAlerts, 10000);
+</script>
+
+</body>
+</html>

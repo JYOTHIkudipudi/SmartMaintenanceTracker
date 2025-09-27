@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Smart Maintenance Tracker</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Icons -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" rel="stylesheet">
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      background: linear-gradient(135deg, #f0f3ff, #d3e0ff);
+      min-height: 100vh;
+      font-family: 'Segoe UI', sans-serif;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 3rem;
+      font-weight: bold;
+      color: #4c2a92;
+      text-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+      animation: fadeInDown 1s ease forwards;
+    }
+
+    .hero p {
+      font-size: 1.2rem;
+      color: #555;
+      margin-top: 10px;
+      animation: fadeIn 1.2s ease forwards;
+    }
+
+    @keyframes fadeInDown {
+      0% {opacity:0; transform: translateY(-30px);}
+      100% {opacity:1; transform: translateY(0);}
+    }
+    @keyframes fadeIn { 0%{opacity:0} 100%{opacity:1} }
+
+    .button-container {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .shiny-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 40px;
+      background: linear-gradient(145deg, #ffffff, #e6e6e6);
+      border-radius: 50px;
+      box-shadow: 4px 4px 8px #c8c8c8, -4px -4px 8px #ffffff;
+      color: #4c2a92;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease-in-out;
+      cursor: pointer;
+      text-decoration: none;
+      position: relative;
+    }
+
+    .shiny-btn::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      height: 4px;
+      width: 0;
+      background: #ffdd57;
+      border-radius: 0 0 50px 50px;
+      transition: width 0.4s ease;
+    }
+
+    .shiny-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 6px 6px 12px #c8c8c8, -6px -6px 12px #ffffff;
+    }
+
+    .shiny-btn:hover::after { width: 100%; }
+
+    .status-cards {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 40px;
+    }
+
+    .card {
+      min-width: 180px;
+      padding: 20px;
+      border-radius: 20px;
+      text-align: center;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      background: #fff;
+      transition: transform 0.3s ease;
+    }
+
+    .card:hover { transform: translateY(-5px); }
+
+    .card h2 { font-size: 2rem; margin-bottom: 5px; }
+    .card p { font-size: 1rem; color: #777; }
+
+    .chart-container {
+      width: 80%;
+      max-width: 600px;
+      background: #fff;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+      margin-bottom: 50px;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="hero">
+    <h1>Smart Maintenance Tracker</h1>
+    <p>Predictive Monitoring • Live Alerts • Export Reports</p>
+  </div>
+
+  <div class="button-container">
+    <a href="/livechart" class="shiny-btn"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
+    <a href="/devices" class="shiny-btn"><i class="fa-solid fa-mobile-screen"></i> Devices</a>
+    <a href="/alerts" class="shiny-btn"><i class="fa-solid fa-bell"></i> Alerts</a>
+    <a href="/export" class="shiny-btn"><i class="fa-solid fa-file-export"></i> Export</a>
+  </div>
+
+  <div class="status-cards">
+    <div class="card">
+      <h2 id="deviceCount">12</h2>
+      <p>Active Devices</p>
+    </div>
+    <div class="card">
+      <h2 id="alertCount">3</h2>
+      <p>New Alerts</p>
+    </div>
+    <div class="card">
+      <h2 id="exportCount">5</h2>
+      <p>Reports Exported</p>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <canvas id="healthChart"></canvas>
+  </div>
+
+  <script>
+    // Sample live-updating chart simulation
+    const ctx = document.getElementById('healthChart');
+    const data = {
+      labels: ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],
+      datasets: [{
+        label: 'Device Health Index',
+        data: [80, 85, 78, 90, 88, 92, 95],
+        borderColor: '#4c2a92',
+        backgroundColor: 'rgba(76,42,146,0.2)',
+        fill: true,
+        tension: 0.3
+      }]
+    };
+    const config = { type: 'line', data, options: { responsive: true, plugins:{legend:{position:'top'}} } };
+    const myChart = new Chart(ctx, config);
+
+    // Simulate real-time updates
+    setInterval(() => {
+      const newVal = Math.floor(Math.random() * 20) + 80;
+      data.datasets[0].data.shift();
+      data.datasets[0].data.push(newVal);
+      myChart.update();
+
+      // Update status cards randomly
+      document.getElementById('deviceCount').textContent = Math.floor(Math.random() * 20) + 10;
+      document.getElementById('alertCount').textContent = Math.floor(Math.random() * 5);
+      document.getElementById('exportCount').textContent = Math.floor(Math.random() * 10);
+    }, 5000);
+  </script>
+</body>
+</html>
